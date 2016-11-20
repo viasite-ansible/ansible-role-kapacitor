@@ -8,15 +8,21 @@
     owner: kapacitor
     group: kapacitor
     mode: 0744
+  notify: restart kapacitord
   when: kapacitor_template_configuration
 
 - name: Start/Restart the Kapacitor service
   service:
     name: kapacitor
-    state: restarted
+    state: started
     enabled: yes
   register: kapacitor_started
   when: kapacitor_start_service
+
+- name: Pause to ensure Kapacitor service is up and send report
+  pause:
+    seconds: 15
+  when: kapacitor_reporting_enabled == "true" and kapacitor_started.changed and kapacitor_start_service
 
 - name: Collect service status
   command: service kapacitor status
@@ -45,7 +51,7 @@
   with_items: "{{ kapacitor_tasks_to_enable }}"
 
 - name: Define specified tasks
-  command: kapacitor define -name {{ item.name }} -type {{ item.type }} -tick /tmp/{{ item.tick }} -dbrp {{ item.dbrp }}
+  command: kapacitor define {{ item.name }} -type {{ item.type }} -tick /tmp/{{ item.tick }} -dbrp {{ item.dbrp }}
   when: kapacitor_list_tasks.stdout.find("{{ item.name }}") == -1
   with_items: "{{ kapacitor_tasks_to_enable }}"
 
@@ -53,3 +59,31 @@
   command: kapacitor enable {{ item.name }}
   when: kapacitor_list_tasks.stdout.find("{{ item.name }}") == -1
   with_items: "{{ kapacitor_tasks_to_enable }}"
+
+- name: Create temp directory
+  file:
+    path: /tmp/kapacitor
+    state: directory
+  tags: test
+
+- name: Build stream_threshold TICK
+  template:
+    src: stream_threshold.tick.j2
+    dest: "/tmp/kapacitor/{{ item.name }}.tick"
+  with_items: kapacitor_stream_thresholds
+  tags: [test, build]
+
+- name: Define stream_thresholds
+  command: kapacitor define {{ item.name }} -type stream -tick /tmp/kapacitor/{{ item.name }}.tick -dbrp {{ item.dbrp | default(kapacitor_dbrp) }}
+  with_items: kapacitor_stream_thresholds
+  tags: test
+
+- name: Enable stream_thresholds
+  command: kapacitor enable {{ item.name }}
+  with_items: kapacitor_stream_thresholds
+  tags: test
+
+- name: Disable stream_thresholds
+  command: kapacitor disable {{ item }}
+  with_items: kapacitor_stream_thresholds_disable
+  tags: test
