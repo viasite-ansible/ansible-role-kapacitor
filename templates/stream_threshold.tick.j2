@@ -1,36 +1,36 @@
 var data = stream
     |from()
-        .measurement('{{item.measurement}}')
+        .measurement('{{ item.measurement }}')
 {% if item.groupBy is defined %}
-        .groupBy('{{item.groupBy}}')
+        .groupBy('{{ item.groupBy }}')
 {% endif %}
     |window()
-        .period({{item.period}})
-        .every({{item.every}})
-    |mean('{{item.field}}')
+        .period({{ item.period }})
+        .every({{ item.every }})
+    |mean('{{ item.field }}')
         .as('field_mean')
 
 data
     |alert()
         .id('{% raw %}server {{ index .Tags "host" }}, task {{ .TaskName }}{% endraw %}')
-        .message('{{kapacitor_message}}')
-        .details('{{kapacitor_details}}')
-        {% if item.crit is defined %}.warn(lambda: "field_mean" {{item.warn}}{% if kapacitor_warn_conditionals is defined %} AND {{kapacitor_warn_conditionals}}{% endif %})
+        .message('{{ kapacitor_message }}')
+        .details('{{ kapacitor_details }}')
+        {% if item.crit is defined %}.warn(lambda: "field_mean" {{ item.warn }}{% if kapacitor_warn_conditionals is defined %} AND {{ kapacitor_warn_conditionals }}{% endif %})
             {% for alert in kapacitor_warn_alerts %}
-.{{alert}}
+.{{ alert }}
             {% endfor %}
         {% endif %}
 
-        {% if item.crit is defined %}.crit(lambda: "field_mean" {{item.crit}})
+        {% if item.crit is defined %}.crit(lambda: "field_mean" {{ item.crit }})
             {% for alert in kapacitor_crit_alerts %}
-.{{alert}}
+.{{ alert }}
             {% endfor %}
         {% endif %}
 
 
 {% if kapacitor_stream_database %}
     data|influxDBOut()
-        .database('{{kapacitor_stream_database}}')
-        .retentionPolicy('{{kapacitor_retention_policy}}')
-        .measurement('{{item.name}}')
+        .database('{{ kapacitor_stream_database }}')
+        .retentionPolicy('{{ kapacitor_retention_policy }}')
+        .measurement('{{ item.name }}')
 {% endif %}

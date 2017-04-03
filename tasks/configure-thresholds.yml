@@ -1,0 +1,24 @@
+---
+- name: Create temp directory
+  file:
+    path: /tmp/kapacitor
+    state: directory
+
+- name: Build stream_threshold TICK
+  template:
+    src: stream_threshold.tick.j2
+    dest: "/tmp/kapacitor/{{ item.name }}.tick"
+  with_items: "{{ kapacitor_stream_thresholds }}"
+  tags: build_thresholds
+
+- name: Define stream_thresholds
+  command: "kapacitor define {{ item.name }} -type stream -tick /tmp/kapacitor/{{ item.name }}.tick -dbrp {{ item.dbrp | default(kapacitor_dbrp) }}"
+  with_items: "{{ kapacitor_stream_thresholds }}"
+
+- name: Enable stream_thresholds
+  command: "kapacitor enable {{ item.name }}"
+  with_items: "{{ kapacitor_stream_thresholds }}"
+
+- name: Disable stream_thresholds
+  command: "kapacitor disable {{ item }}"
+  with_items: "{{ kapacitor_stream_thresholds_disable }}"

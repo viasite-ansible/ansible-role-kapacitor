@@ -15,10 +15,11 @@ galaxy_info:
         - trusty
         - utopic
         - vivid
+        - xenial
     - name: Debian
       versions:
         - jessie
         - wheezy
-  categories:
+  galaxy_tags:
     - monitoring
-  dependencies: []
+dependencies: []

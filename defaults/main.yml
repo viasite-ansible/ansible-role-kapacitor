@@ -5,6 +5,12 @@ kapacitor_install_version: stable
 # Leave empty to use the system hostname
 kapacitor_hostname:
 
+kapacitor_tasks_to_enable: []
+kapacitor_stream_thresholds: []
+
+kapacitor_stream_database: kapacitor
+kapacitor_dbrp: telegraf.default
+
 # Directory for storing small amount of metadata
 kapacitor_data_directory: /var/lib/kapacitor
 
