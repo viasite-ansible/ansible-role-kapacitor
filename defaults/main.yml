@@ -8,6 +8,7 @@ kapacitor_hostname:
 kapacitor_tasks_to_enable: []
 kapacitor_stream_thresholds: []
 
+
 kapacitor_stream_database: kapacitor
 kapacitor_dbrp: telegraf.default
 

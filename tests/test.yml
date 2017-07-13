@@ -1,29 +1,20 @@
 ---
 - hosts: all
-  remote_user: root
-  vars:
-    - influxdb_install_version:
-  roles:
-    - role: ansible-kapacitor
-      influxdb_install_version: stable
-      kapacitor_tasks_to_enable:
-      - name: cpu_alert
-        type: stream
-        tick: cpu_alert.tick
-        dbrp: telegraf.default
-      - name: cpu_alert_batch
-        type: batch
-        tick: cpu_alert_batch.tick
-        dbrp: telegraf.default
-      - name: disk_alert
-        type: stream
-        tick: disk_alert.tick
-        dbrp: telegraf.default
-      kapacitor_influxdb_subscriptions:
-      - name: test_db
-        rps:
-          - rp_test_db
-      - name: test_db_2
-        rps:
-          - rp_test_db_one
-          - rp_test_db_two
+  tasks:
+  - name: Install net-tools when centos7
+    yum:
+      name: net-tools
+      state: installed
+    when: ansible_os_family == "RedHat"
+  - name: Install Packages for Debian
+    apt:
+      update_cache: yes
+      name: '{{item}}'
+      state: present
+    with_items:
+      - apt-transport-https
+      - curl
+      - net-tools
+    when: ansible_os_family == "Debian"
+
+- include: playbook.yml

@@ -1,5 +1,33 @@
 ---
+- name: Define specified tasks
+  command: kapacitor define {{ item.name }} -type {{ item.type }} -tick /tmp/{{ item.tick }} -dbrp {{ item.dbrp }}
+  with_items: "{{ kapacitor_tasks_to_enable }}"
+  listen: configure_ticks
+
+- name: Enable specified tasks
+  command: kapacitor enable {{ item.name }}
+  with_items: "{{ kapacitor_tasks_to_enable }}"
+  listen: configure_ticks
+
+- name: Define stream_thresholds
+  command: "kapacitor define {{ item.name }} -type stream -tick /tmp/kapacitor/{{ item.name }}.tick -dbrp {{ item.dbrp | default(kapacitor_dbrp) }}"
+  with_items: "{{ kapacitor_stream_thresholds }}"
+  listen: configure_thresholds
+
+- name: Enable stream_thresholds
+  command: "kapacitor enable {{ item }}"
+  with_items: "{{ kapacitor_stream_thresholds }}"
+  listen: configure_thresholds
+
+- name: Disable stream_thresholds
+  command: "kapacitor disable {{ item }}"
+  with_items: "{{ kapacitor_stream_thresholds_disable }}"
+  listen: configure_thresholds
+
 - name: restart kapacitord
   service:
     name: kapacitor
     state: restarted
+  listen:
+    - configure_thresholds
+    - configure_ticks
