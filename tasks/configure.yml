@@ -11,51 +11,15 @@
   notify: restart kapacitord
   when: kapacitor_template_configuration
 
-- name: Start/Restart the Kapacitor service
+- name: Verifying kapacitord is started
   service:
     name: kapacitor
     state: started
-    enabled: yes
-  register: kapacitor_started
-  when: kapacitor_start_service
 
-- name: Pause to ensure Kapacitor service is up and send report
-  pause:
-    seconds: 15
-  when: kapacitor_reporting_enabled == "true" and kapacitor_started.changed and kapacitor_start_service
+- include: configure-ticks.yml
+  when: kapacitor_tasks_to_enable is defined
+  tags: [kapacitor, ticks]
 
-- name: Collect service status
-  command: service kapacitor status
-  register: kapacitor_service_status
-  when: kapacitor_start_service
-  ignore_errors: yes
-
-- name: Assert status of Kapacitor service
-  assert:
-    that:
-      - "kapacitor_service_status.rc == 0"
-  when: kapacitor_start_service
-
-- name: Check for existing tasks
-  command: kapacitor list tasks
-  register: kapacitor_list_tasks
-
-- debug:
-    var: kapacitor_list_tasks
-
-- name: Copy specified TICKscript scripts to remote host
-  copy:
-    src: "{{ item.tick }}"
-    dest: /tmp/{{ item.tick }}
-  when: kapacitor_list_tasks.stdout.find("{{ item.name }}") == -1
-  with_items: "{{ kapacitor_tasks_to_enable }}"
-
-- name: Define specified tasks
-  command: kapacitor define {{ item.name }} -type {{ item.type }} -tick /tmp/{{ item.tick }} -dbrp {{ item.dbrp }}
-  when: kapacitor_list_tasks.stdout.find("{{ item.name }}") == -1
-  with_items: "{{ kapacitor_tasks_to_enable }}"
-
-- name: Enable specified tasks
-  command: kapacitor enable {{ item.name }}
-  when: kapacitor_list_tasks.stdout.find("{{ item.name }}") == -1
-  with_items: "{{ kapacitor_tasks_to_enable }}"
+- include: configure-thresholds.yml
+  when: kapacitor_stream_thresholds is defined
+  tags: [kapacitor, thresholds]

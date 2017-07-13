@@ -1,0 +1,6 @@
+- name: Copy specified TICKscript scripts to remote host
+  copy:
+    src: "{{ item.tick }}"
+    dest: /tmp/{{ item.tick }}
+  with_items: "{{ kapacitor_tasks_to_enable }}"
+  notify: configure_ticks
