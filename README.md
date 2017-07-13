@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/viasite-ansible/ansible-role-kapacitor.svg?branch=master)](https://travis-ci.org/viasite-ansible/ansible-role-kapacitor)
+[![Build Status](https://travis-ci.org/mplachter/ansible-role-kapacitor.svg?branch=master)](https://travis-ci.org/mplachter/ansible-role-kapacitor)
 
 Kapacitor
 =========
