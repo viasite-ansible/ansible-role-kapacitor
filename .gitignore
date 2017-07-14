@@ -9,3 +9,4 @@ ansible.cfg
 .molecule
 test.retry
 .cache
+__pycache__

@@ -4,7 +4,3 @@
 
 - include: configure.yml
   tags: [kapacitor, configure]
-
-- include: configure-thresholds.yml
-  when: kapacitor_stream_thresholds is defined
-  tags: [kapacitor, thresholds]

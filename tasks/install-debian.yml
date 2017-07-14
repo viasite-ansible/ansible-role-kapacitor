@@ -25,11 +25,13 @@
 - name: Install Kapacitor packages [Debian/Ubuntu]
   apt:
     name: kapacitor
-    state: latest
+    state: present
   when: kapacitor_install_url is not defined or kapacitor_install_url == None
 
 - name: Download Kapacitor package via URL [Debian/Ubuntu]
-  command: curl -o /tmp/kapacitor-ansible-download.deb {{ kapacitor_install_url }}
+  get_url:
+    url: '{{ kapacitor_install_url }}'
+    dest: /tmp/kapacitor-ansible-download.deb
   when: kapacitor_install_url is defined and kapacitor_install_url != None
 
 - name: Install downloaded Kapacitor package [Debian/Ubuntu]
