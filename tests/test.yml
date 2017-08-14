@@ -1,11 +1,6 @@
 ---
 - hosts: all
   tasks:
-  - name: Install net-tools when centos7
-    yum:
-      name: net-tools
-      state: installed
-    when: ansible_os_family == "RedHat"
   - name: Install Packages for Debian
     apt:
       update_cache: yes
