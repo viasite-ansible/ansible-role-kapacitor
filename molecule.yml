@@ -6,8 +6,8 @@ docker:
   containers:
   - name: docker-kapacitor-centos
     hostname: kapacitor-centos
-    image: centos
-    image_version: 7
+    image: mplachter/docker-centos7-molecule
+    image_version: latest
     privileged: True
     cap_add:
       - ALL
