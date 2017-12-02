@@ -1,6 +1,6 @@
 ---
--test:
- -  tags:
- -    - vagrant
- -  script:
- -    - molecule test
+test:
+  tags:
+    - vagrant
+  script:
+    - molecule test

@@ -1,0 +1,36 @@
+---
+scenario:
+  name: vagrant
+
+dependency:
+  name: galaxy
+  options:
+    role-file: molecule/resources/requirements.yml
+
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+platforms:
+  - name: xenial64
+    box: bento/ubuntu-16.04
+  - name: centos74
+    box: bento/centos-7.4
+
+lint:
+  name: yamllint
+  enabled: False
+
+verifier:
+  name: testinfra
+  directory: ../resources/tests
+
+provisioner:
+  name: ansible
+  playbooks:
+    prepare: ../resources/prepare.yml
+    converge: ../resources/playbook.yml
+  inventory:
+    links:
+      group_vars:
+        ../../resources/group_vars

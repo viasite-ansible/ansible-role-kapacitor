@@ -1,5 +1,6 @@
 # Kapacitor InfluxDB Test
 influxdb_install_version: stable
+kapacitor_influxdb_enabled: "true"
 
 # Kapacitor Tick Test Config
 kapacitor_tasks_to_enable:

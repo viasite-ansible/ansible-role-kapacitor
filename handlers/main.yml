@@ -1,6 +1,6 @@
 ---
 - name: Define specified tasks
-  command: kapacitor define {{ item.name }} -type {{ item.type }} -tick /tmp/{{ item.tick }} -dbrp {{ item.dbrp }}
+  command: kapacitor define {{ item.name }} -type {{ item.type }} -tick /tmp/{{ item.tick | basename }} -dbrp {{ item.dbrp }}
   with_items: "{{ kapacitor_tasks_to_enable }}"
   listen: configure_ticks
 
@@ -15,7 +15,7 @@
   listen: configure_thresholds
 
 - name: Enable stream_thresholds
-  command: "kapacitor enable {{ item }}"
+  command: "kapacitor enable {{ item.name }}"
   with_items: "{{ kapacitor_stream_thresholds }}"
   listen: configure_thresholds
 
