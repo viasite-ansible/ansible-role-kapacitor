@@ -1,29 +1,30 @@
+---
 # Kapacitor InfluxDB Test
 influxdb_install_version: stable
 kapacitor_influxdb_enabled: "true"
 
 # Kapacitor Tick Test Config
 kapacitor_tasks_to_enable:
-- name: cpu_alert
-  type: stream
-  tick: cpu_alert.tick
-  dbrp: telegraf.default
-- name: cpu_alert_batch
-  type: batch
-  tick: cpu_alert_batch.tick
-  dbrp: telegraf.default
-- name: disk_alert
-  type: stream
-  tick: disk_alert.tick
-  dbrp: telegraf.default
+  - name: cpu_alert
+    type: stream
+    tick: cpu_alert.tick
+    dbrp: telegraf.default
+  - name: cpu_alert_batch
+    type: batch
+    tick: cpu_alert_batch.tick
+    dbrp: telegraf.default
+  - name: disk_alert
+    type: stream
+    tick: disk_alert.tick
+    dbrp: telegraf.default
 kapacitor_influxdb_subscriptions:
-- name: test_db
-  rps:
-    - rp_test_db
-- name: test_db_2
-  rps:
-    - rp_test_db_one
-    - rp_test_db_two
+  - name: test_db
+    rps:
+      - rp_test_db
+  - name: test_db_2
+    rps:
+      - rp_test_db_one
+      - rp_test_db_two
 
 # Kapactitor Thresholds Test Configuration
 kapacitor_stream_thresholds:

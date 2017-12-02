@@ -1,7 +1,8 @@
+---
 - hosts: all
   roles:
     - role: influxdb
-      influxdb_overwrite_hosts_file: yes
+      influxdb_overwrite_hosts_file: "yes"
     - role: telegraf
   vars_files:
     - defaults/main.yml

@@ -21,17 +21,21 @@ platforms:
     privileged: True
     capabilities:
       - ALL
-    volume_mounts:
+    volume:
       - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
+    command: "/sbin/init"
 
 lint:
   name: yamllint
-  enabled: False
+  enabled: "true"
+  options:
+    c: molecule/default/yamllint_config.yml
 
 verifier:
   name: testinfra
   directory: ../resources/tests
-
+  options:
+    verbose: True
 provisioner:
   name: ansible
   playbooks:

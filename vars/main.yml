@@ -2,7 +2,7 @@
 
 # Whether or not the playbook is run locally (changes clustering and testing logic slightly)
 # This should only be set in the Vagrantfile and not modified elsewhere
-is_vagrant: no
+is_vagrant: "False"
 
 # By default, the InfluxData package repository will be used for installation. Alternatively,
 # if you have a specific package/version you want to install from, you can specify a package
@@ -11,10 +11,10 @@ is_vagrant: no
 kapacitor_install_url:
 
 # If yes, service will be started. Will not be started if set to no.
-kapacitor_start_service: yes
+kapacitor_start_service: "True"
 
 # If yes, will overwrite the packaged configuration with an Asnible/jinja2 template
-kapacitor_template_configuration: yes
+kapacitor_template_configuration: "True"
 
 # If supplied, will check for presence of database, and error if not found (useful for upgrade
 # testing).

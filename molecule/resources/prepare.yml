@@ -1,18 +1,19 @@
 ---
 - name: Prepare
   hosts: all
-  become: yes # for vagrant
-  gather_facts: True
+  become: "True"
+  # ^ For vagrant
+  gather_facts: "True"
   tasks:
     - name: apt-proxy
       copy:
         content: "Acquire::http::Proxy \"{{ lookup('env', 'APT_PROXY') }}\"; Acquire::https::Proxy \"false\";"
         dest: /etc/apt/apt.conf.d/01proxy
-      failed_when: False
+      failed_when: "False"
 
     - name: Install Packages for Debian
       apt:
-        update_cache: yes
+        update_cache: "yes"
         name: '{{item}}'
         state: present
       with_items:

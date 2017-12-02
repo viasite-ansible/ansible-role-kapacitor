@@ -10,8 +10,8 @@
   template:
     src: etc/yum.repos.d/influxdata.repo.j2
     dest: /etc/yum.repos.d/influxdata.repo
-    force: yes
-    backup: yes
+    force: "yes"
+    backup: "yes"
   when: kapacitor_install_url is not defined or kapacitor_install_url == None
 
 - name: Install Kapacitor packages [RHEL/CentOS]

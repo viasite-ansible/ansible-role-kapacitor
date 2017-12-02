@@ -3,8 +3,8 @@
   template:
     src: kapacitor.conf.j2
     dest: "/etc/kapacitor/kapacitor.conf"
-    force: yes
-    backup: yes
+    force: "yes"
+    backup: "yes"
     owner: kapacitor
     group: kapacitor
     mode: 0744

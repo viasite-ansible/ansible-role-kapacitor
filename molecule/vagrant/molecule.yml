@@ -19,7 +19,7 @@ platforms:
 
 lint:
   name: yamllint
-  enabled: False
+  enabled: "False"
 
 verifier:
   name: testinfra

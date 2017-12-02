@@ -1,5 +1,6 @@
 ---
 - hosts: all
-  become: yes # for vagrant
+  become: "True"
+  # ^ For vagrant
   roles:
     - ansible-role-kapacitor
