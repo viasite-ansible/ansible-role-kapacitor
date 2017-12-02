@@ -8,7 +8,10 @@ services:
 before_install:
   - docker --version
 install:
-  - pip install molecule docker
+  - pip install molecule==2.5.0
+  - pip install -U ansible==2.4.2.0
+  - pip install -U testinfra==1.7.1
+  - pip install docker
 script:
   - molecule test
 
