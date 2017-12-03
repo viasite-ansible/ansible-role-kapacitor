@@ -1,0 +1,36 @@
+---
+- name: Create temp directory
+  file:
+    path: /tmp/kapacitor
+    state: directory
+
+- name: Build TICK scripts from kapacitor_tasks
+  template:
+    src: "{{ item.template }}"
+    dest: "/tmp/kapacitor/{{ item.name }}.tick"
+  with_items: "{{ kapacitor_tasks }}"
+  when: item.state is not defined or item.state=='enabled'
+  register: kapacitor_register_tasks
+
+- name: Define tasks
+  command: "kapacitor define {{ item.1.name }} -type {{ item.1.type | default('stream') }} -tick /tmp/kapacitor/{{ item.1.name }}.tick -dbrp {{ item.1.dbrp | default(kapacitor_dbrp) }}"
+  with_indexed_items: "{{ kapacitor_tasks }}"
+  when: kapacitor_register_tasks.results[item.0] | changed
+
+- name: Enable tasks
+  command: "kapacitor enable {{ item.item.name }}"
+  with_items: "{{ kapacitor_register_tasks.results }}"
+  when: item.changed
+  notify: restart kapacitord
+  tags: skip_ansible_lint
+
+- name: Get enabled tasks
+  shell: kapacitor list tasks | grep enabled | cut -d' ' -f1
+  changed_when: false
+  register: kapacitor_enabled_tasks
+
+- name: Disable tasks
+  command: "kapacitor disable {{ item.name }}"
+  with_items: "{{ kapacitor_tasks }}"
+  when: item.state is defined and item.state=='disabled' and item.name in kapacitor_enabled_tasks.stdout_lines
+  notify: restart kapacitord

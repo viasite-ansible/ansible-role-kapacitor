@@ -1,12 +1,13 @@
+import os
 import testinfra.utils.ansible_runner
 import pytest
 
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
-    '../default/.molecule/ansible_inventory.yml').get_hosts('all')
+    os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
 
-def test_kapacitor_running_and_enabled(Service):
-    kapacitor = Service("kapacitor")
+def test_kapacitor_running_and_enabled(host):
+    kapacitor = host.service("kapacitor")
     assert kapacitor.is_running
     assert kapacitor.is_enabled
 
@@ -31,25 +32,27 @@ def test_kapacitor_running_and_enabled(Service):
     ('level = "INFO"'),
     ('urls = \\["http://localhost:8086"\\]')
 ])
-def test_kapacitor_config(File, teststring):
-    kap_config = File("/etc/kapacitor/kapacitor.conf")
+def test_kapacitor_config(host, teststring):
+    kap_config = host.file("/etc/kapacitor/kapacitor.conf")
     assert kap_config.exists
     assert kap_config.contains(teststring)
 
 
-def test_tick_file(File):
+def test_tick_file(host):
     for alert in (
+        "kapacitor/alert_load_average",
         "cpu_alert",
         "disk_alert",
         "cpu_alert_batch"
     ):
-        tick_script = File("/tmp/" + alert + ".tick")
+        tick_script = host.file("/tmp/" + alert + ".tick")
         assert tick_script.exists
 
 
-def test_tick_load(Command):
-    tick_load = Command("kapacitor list tasks")
+def test_tick_load(host):
+    tick_load = host.command("kapacitor list tasks")
     for alert in (
+            "alert_load_average",
             "cpu_alert",
             "disk_alert",
             "cpu_alert_batch"
@@ -57,5 +60,5 @@ def test_tick_load(Command):
         assert alert in tick_load.stdout
 
 
-def test_kapacitor_listener(Socket, SystemInfo):
-    assert Socket('tcp://:::9092').is_listening
+def test_kapacitor_listener(host):
+    assert host.socket('tcp://:::9092').is_listening

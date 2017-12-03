@@ -16,6 +16,11 @@
     name: kapacitor
     state: started
 
+- debug: msg="Variables kapacitor_tasks_to_enable, kapacitor_stream_thresholds, kapacitor_stream_thresholds_disable has been deprecated and will be removed in a future release. Use kapacitor_tasks."
+  when: kapacitor_tasks_to_enable is defined or kapacitor_stream_thresholds is defined or kapacitor_stream_thresholds_disable is defined
+  failed_when: true
+  ignore_errors: true
+
 - include_tasks: configure-ticks.yml
   when: kapacitor_tasks_to_enable is defined
   tags: [kapacitor, ticks]
@@ -23,3 +28,7 @@
 - include_tasks: configure-thresholds.yml
   when: kapacitor_stream_thresholds is defined
   tags: [kapacitor, thresholds]
+
+- include: configure-tasks.yml
+  when: kapacitor_tasks is defined
+  tags: [kapacitor, tasks]

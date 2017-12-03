@@ -6,7 +6,7 @@
 
 - name: Build stream_threshold TICK
   template:
-    src: stream_threshold.tick.j2
+    src: tick/stream_threshold.tick.j2
     dest: "/tmp/kapacitor/{{ item.name }}.tick"
   with_items: "{{ kapacitor_stream_thresholds }}"
   notify: configure_thresholds
