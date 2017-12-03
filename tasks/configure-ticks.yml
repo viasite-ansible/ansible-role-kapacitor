@@ -1,3 +1,4 @@
+---
 - name: Copy specified TICKscript scripts to remote host
   copy:
     src: "{{ item.tick }}"

@@ -3,8 +3,8 @@
   template:
     src: kapacitor.conf.j2
     dest: "/etc/kapacitor/kapacitor.conf"
-    force: yes
-    backup: yes
+    force: "yes"
+    backup: "yes"
     owner: kapacitor
     group: kapacitor
     mode: 0744
@@ -16,10 +16,10 @@
     name: kapacitor
     state: started
 
-- include: configure-ticks.yml
+- include_tasks: configure-ticks.yml
   when: kapacitor_tasks_to_enable is defined
   tags: [kapacitor, ticks]
 
-- include: configure-thresholds.yml
+- include_tasks: configure-thresholds.yml
   when: kapacitor_stream_thresholds is defined
   tags: [kapacitor, thresholds]
