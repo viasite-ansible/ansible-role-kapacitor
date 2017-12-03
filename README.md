@@ -66,5 +66,4 @@ MIT
 Author
 ------
 
-Created by [Ross McDonald](https://github.com/rossmcdonald).
-
+Created by [Ross McDonald](https://github.com/rossmcdonald). Forked by [Stanislav Popov](https://github.com/popstas).

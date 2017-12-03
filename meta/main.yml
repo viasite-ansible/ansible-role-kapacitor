@@ -1,10 +1,10 @@
 ---
 galaxy_info:
-  author: Ross McDonald
+  author: Stanislav Popov
   description: Install and configure Kapacitor, an open-source framework for processing, monitoring, and alerting on time series data
-  company: InfluxData
+  company: Viasite
   license: MIT
-  min_ansible_version: 1.2
+  min_ansible_version: 2.4
   platforms:
     - name: EL
       versions:
