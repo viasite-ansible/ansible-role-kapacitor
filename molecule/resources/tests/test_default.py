@@ -32,14 +32,15 @@ def test_kapacitor_running_and_enabled(host):
     ('level = "INFO"'),
     ('urls = \\["http://localhost:8086"\\]')
 ])
-def test_kapacitor_config(File, teststring):
-    kap_config = File("/etc/kapacitor/kapacitor.conf")
+def test_kapacitor_config(host, teststring):
+    kap_config = host.file("/etc/kapacitor/kapacitor.conf")
     assert kap_config.exists
     assert kap_config.contains(teststring)
 
 
 def test_tick_file(host):
     for alert in (
+        "kapacitor/alert_load_average",
         "cpu_alert",
         "disk_alert",
         "cpu_alert_batch"
@@ -51,6 +52,7 @@ def test_tick_file(host):
 def test_tick_load(host):
     tick_load = host.command("kapacitor list tasks")
     for alert in (
+            "alert_load_average",
             "cpu_alert",
             "disk_alert",
             "cpu_alert_batch"

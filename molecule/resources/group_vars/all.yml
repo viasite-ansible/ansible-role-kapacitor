@@ -3,6 +3,28 @@
 influxdb_install_version: stable
 kapacitor_influxdb_enabled: "true"
 
+kapacitor_tasks:
+  - name: alert_load_average
+    template: tick/stream_threshold.tick.j2
+    measurement: system
+    field: load1
+    groupBy: host
+    period: 3m
+    every: 1m
+    warn: "> 4"
+    crit: "> 8"
+
+  - name: disk_used_percent
+    template: tick/stream_threshold.tick.j2
+    state: disabled
+    measurement: disk
+    field: used_percent
+    groupBy: ['host', 'path']
+    period: 1m
+    every: 1m
+    warn: "> 95"
+    crit: "> 97"
+
 # Kapacitor Tick Test Config
 kapacitor_tasks_to_enable:
   - name: cpu_alert

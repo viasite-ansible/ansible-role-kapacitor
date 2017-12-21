@@ -24,6 +24,12 @@
   with_items: "{{ kapacitor_stream_thresholds_disable }}"
   listen: configure_thresholds
 
+- name: Disable tasks
+  command: "kapacitor disable {{ item }}"
+  with_items: "{{ kapacitor_tasks_to_disable }}"
+  listen: configure_tasks
+  when: kapacitor_tasks_to_disable is defined
+
 - name: restart kapacitord
   service:
     name: kapacitor
