@@ -10,18 +10,11 @@ var groupBy = ['{{ item.groupBy|join("','") }}']
 {% endif %}
 var period = {{ item.period }}
 var every = {{ item.every }}
-var field_mean = 'field_mean'
 var message = '{{ kapacitor_message }}'
 var details = '{{ kapacitor_details }}'
 {% if kapacitor_stream_database %}
 var stream_database = '{{ kapacitor_stream_database }}'
 var retention_policy = '{{ kapacitor_retention_policy }}'
-{% endif %}
-{% if item.warn is defined %}
-var warn = lambda: field_mean '{{ item.warn }}'
-{% endif %}
-{% if item.crit is defined %}
-var crit = lambda: field_mean '{{ item.crit }}'
 {% endif %}
 
 var data = stream
@@ -34,21 +27,20 @@ var data = stream
         .period(period)
         .every(every)
     |mean(field)
-        .as(field_mean)
+        .as('field_mean')
 
 data
     |alert()
         .id('{% raw %}server {{ index .Tags "host" }}, task {{ .TaskName }}{% endraw %}')
         .message(message)
         .details(details)
-        .warn(warn)
-        {% if item.warn is defined %}.warn(warn{% if kapacitor_warn_conditionals is defined %} AND {{ kapacitor_warn_conditionals }}{% endif %})
+        {% if item.warn is defined %}.warn(lambda: "field_mean" {{ item.warn }}{% if kapacitor_warn_conditionals is defined %} AND {{ kapacitor_warn_conditionals }}{% endif %})
             {% for alert in kapacitor_warn_alerts %}
 .{{ alert }}
             {% endfor %}
         {% endif %}
 
-        {% if item.crit is defined %}.crit(crit)
+        {% if item.crit is defined %}.crit(lambda: "field_mean" {{ item.crit }})
             {% for alert in kapacitor_crit_alerts %}
 .{{ alert }}
             {% endfor %}
