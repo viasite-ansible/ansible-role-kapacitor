@@ -10,3 +10,4 @@ ansible.cfg
 test.retry
 .cache
 __pycache__
+.vscode
