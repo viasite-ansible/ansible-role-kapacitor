@@ -5,9 +5,13 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     '../default/.molecule/ansible_inventory.yml').get_hosts('all')
 
 
-def test_kapacitor_running_and_enabled(Service):
+def test_kapacitor_running(Service):
     kapacitor = Service("kapacitor")
     assert kapacitor.is_running
+
+
+def test_kapacitor_enabled(Service):
+    kapacitor = Service("kapacitor")
     assert kapacitor.is_enabled
 
 

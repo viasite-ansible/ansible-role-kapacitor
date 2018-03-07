@@ -11,10 +11,11 @@
   notify: restart kapacitord
   when: kapacitor_template_configuration
 
-- name: Verifying kapacitord is started
+- name: Verifying kapacitord is started and enabled
   service:
     name: kapacitor
     state: started
+    enabled: yes
 
 - include_tasks: configure-ticks.yml
   when: kapacitor_tasks_to_enable is defined
