@@ -1,0 +1,55 @@
+var name = '{{ item.name }}'
+var measurement = '{{ item.measurement }}'
+var field = '{{ item.field }}'
+{% if item.groupBy is defined %}
+{% if item.groupBy is string %}
+var groupBy = ['{{ item.groupBy }}']
+{% else %}
+var groupBy = ['{{ item.groupBy|join("','") }}']
+{% endif %}
+{% endif %}
+var period = {{ item.period }}
+var every = {{ item.every }}
+var message = '{{ kapacitor_message }}'
+var details = '{{ kapacitor_details }}'
+{% if kapacitor_stream_database %}
+var stream_database = '{{ kapacitor_stream_database }}'
+var retention_policy = '{{ kapacitor_retention_policy }}'
+{% endif %}
+
+var data = stream
+    |from()
+        .measurement(measurement)
+{% if item.groupBy is defined %}
+        .groupBy(groupBy)
+{% endif %}
+    |window()
+        .period(period)
+        .every(every)
+    |mean(field)
+        .as('field_mean')
+
+data
+    |alert()
+        .id('{% raw %}server {{ index .Tags "host" }}, task {{ .TaskName }}{% endraw %}')
+        .message(message)
+        .details(details)
+        {% if item.warn is defined %}.warn(lambda: "field_mean" {{ item.warn }}{% if kapacitor_warn_conditionals is defined %} AND {{ kapacitor_warn_conditionals }}{% endif %})
+            {% for alert in kapacitor_warn_alerts %}
+.{{ alert }}
+            {% endfor %}
+        {% endif %}
+
+        {% if item.crit is defined %}.crit(lambda: "field_mean" {{ item.crit }})
+            {% for alert in kapacitor_crit_alerts %}
+.{{ alert }}
+            {% endfor %}
+        {% endif %}
+
+
+{% if kapacitor_stream_database %}
+    data|influxDBOut()
+        .database(stream_database)
+        .retentionPolicy(retention_policy)
+        .measurement(name)
+{% endif %}

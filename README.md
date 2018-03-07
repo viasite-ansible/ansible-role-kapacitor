@@ -31,6 +31,47 @@ kapacitor_install_version: stable
 
 More advanced configuration options are stored in the `vars/main.yml` file, which includes all of the necessary bells and whistles to tweak your configuration.
 
+Task templates
+--------------
+
+Tasks should be defined with `kapacitor_tasks`, variables `kapacitor_tasks_to_enable`, `kapacitor_stream_thresholds`, `kapacitor_stream_thresholds_disable` has been deprecated and will be removed in a future release.
+
+``` yaml
+kapacitor_tasks:
+  - name: alert_load_average
+    template: tick/stream_threshold.tick.j2
+    measurement: system
+    field: load1
+    groupBy: host
+    period: 3m
+    every: 1m
+    warn: "> 4"
+    crit: "> 8"
+
+  - name: disk_used_percent
+    template: tick/stream_threshold.tick.j2
+    state: disabled
+    measurement: disk
+    field: used_percent
+    groupBy: ['host', 'path']
+    period: 1m
+    every: 1m
+    warn: "> 95"
+    crit: "> 97"
+
+  - name: stream_disk_util
+    template: ../../vars/kapacitor/stream_disk_util.tick
+
+```
+
+Default task values:
+
+``` yaml
+type: stream
+dbrp: "{{ kapacitor_dbrp }}"
+state: enabled
+```
+
 Dependencies
 ------------
 
@@ -66,5 +107,4 @@ MIT
 Author
 ------
 
-Created by [Ross McDonald](https://github.com/rossmcdonald).
-
+Created by [Ross McDonald](https://github.com/rossmcdonald). Forked by [Stanislav Popov](https://github.com/popstas).
