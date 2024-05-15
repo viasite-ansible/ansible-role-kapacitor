@@ -15,7 +15,7 @@
 - name: Define tasks
   command: "kapacitor define {{ item.1.name }} -type {{ item.1.type | default('stream') }} -tick /tmp/kapacitor/{{ item.1.name }}.tick -dbrp {{ item.1.dbrp | default(kapacitor_dbrp) }}"
   with_indexed_items: "{{ kapacitor_tasks }}"
-  when: kapacitor_register_tasks.results[item.0] | changed
+  when: kapacitor_register_tasks.results[item.0] is changed
 
 - name: Enable tasks
   command: "kapacitor enable {{ item.item.name }}"
